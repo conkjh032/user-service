@@ -1,0 +1,21 @@
+server:
+  # port: 0은 랜덤 포트 설정
+  port: 0
+
+spring:
+  application:
+    name: user-service
+
+eureka:
+  # ${spring.cloud.client.hostname} : hostname 출력
+  # ${spring.application.instance_id:${random.value}} : instance-id와 랜덤 포트 출력
+  instance:
+    instance-id: ${spring.cloud.client.hostname}:${spring.application.instance_id:${random.value}}
+
+  client:
+    register-with-eureka: true
+    # fetch-registry : Eureka 서버로부터 인스턴스들의 정보를 주기적으로 가져오는 설정
+    fetch-registry: true
+    # defaultZone : 디스커버리 서버 위치
+    service-url:
+      defaultZone: http://localhost:8761/eureka
