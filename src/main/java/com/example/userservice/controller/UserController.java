@@ -6,6 +6,7 @@ import com.example.userservice.vo.Greeting;
 import com.example.userservice.vo.RequestUser;
 import com.example.userservice.dto.UserDto;
 import com.example.userservice.vo.ResponseUser;
+import io.micrometer.core.annotation.Timed;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,11 +24,11 @@ import java.util.List;
 @RequestMapping("/")
 public class UserController {
 
-    // application.yaml에 있는 설정 가져오는 방법 1 : vo(Value Object)에 주입하여 빈으로 등록하고 Autowired로 받기
+    // application.yml에 있는 설정 가져오는 방법 1 : vo(Value Object)에 주입하여 빈으로 등록하고 Autowired로 받기
     @Autowired
     private Greeting greeting;
 
-    // application.yaml에 있는 설정 가져오는 방법 2 : Autowired와 생성자로 변수에 주입
+    // application.yml에 있는 설정 가져오는 방법 2 : Autowired와 생성자로 변수에 주입
     private Environment env;
     private UserService userService;
 
@@ -38,11 +39,19 @@ public class UserController {
     }
 
     @GetMapping("/health_check")
+    @Timed(value = "users.status", longTask = true)
     public String status() {
-        return String.format("It's Working in User Service on PORT %s", env.getProperty("local.server.port"));
+        return String.format("It's Working in User Service"
+                + ", port(local.server.port)=" + env.getProperty("local.server.port")
+                + ", port(server.server.port)=" + env.getProperty("server.port")
+                + ", token secret=" + env.getProperty("token.secret")
+                + ", token expiration time=" + env.getProperty("token.expiration_time"));
+
     }
 
+
     @GetMapping("/welcome")
+    @Timed(value = "users.welcome", longTask = true)
     public String welcome() {
 //        return env.getProperty("greeting.message"); // 생성자로 설정값 가져오기
         return greeting.getMessage(); // @Value로 설정값 가져오기

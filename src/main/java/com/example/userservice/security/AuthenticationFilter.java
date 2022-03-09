@@ -44,7 +44,7 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
     // '인증 요청을 보내면 처리'와 '성공할 때' 메소드 필요
 
     // 로그인 시도 처리
-   @Override
+    @Override
     public Authentication attemptAuthentication(HttpServletRequest request,
                                                 HttpServletResponse response) throws AuthenticationException {
 
@@ -54,7 +54,8 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
            RequestLogin creds = new ObjectMapper().readValue(request.getInputStream(), RequestLogin.class);
 
            // UsernamePasswordAuthenticationToken으로 Email과 Password를 Token으로 바꿔준다.
-           // Token을 getAuthenticationManager에 넘겨서 Email과 Password를 비교해서 인증처리
+           // getAuthenticationManager에서 UserDetailsService의 loadUserByUsername에서 가져온 정보와
+           // 여기서 만든 Token을 비교하여 인증
            return getAuthenticationManager().authenticate(
                    new UsernamePasswordAuthenticationToken(
                            creds.getEmail(),

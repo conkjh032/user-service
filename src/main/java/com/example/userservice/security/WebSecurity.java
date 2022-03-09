@@ -35,6 +35,8 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable();
 
+        http.authorizeRequests().antMatchers("/actuator/**").permitAll();
+
         // 해당 url로 들어온 요청은 인증없이 서비스 사용 가능 설정
         // 참고 : https://jhhan009.tistory.com/31
         http.authorizeRequests().antMatchers("/**").permitAll();
@@ -49,7 +51,7 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
 
         // DB에서 입력된 Email에 맞는 pwd를 가져와야 한다. 유저 관련 비즈니스 로직은 UserService에 있다.
-        // DA에서 가져온 pwd(encrypted)와 입력된 pwd(not encrypted)를 비교한다.
+        // DB에서 가져온 pwd(encrypted)와 입력된 pwd(not encrypted)를 비교한다.
         // bCryptPasswordEncoder 넣어줘서 입력된 pwd(not encrypted) 암호화하여 비교한다.
         auth.userDetailsService(userService).passwordEncoder(bCryptPasswordEncoder);
 

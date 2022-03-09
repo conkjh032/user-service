@@ -5,16 +5,26 @@ server:
 spring:
   application:
     name: user-service
-  # h2 데이터베이스 설정
+  zipkin:
+    base-url: http://127.0.0.1:9411
+    enabled: true
+  sleuth:
+    sampler:
+      probability: 1.0 # 로그를 몇 퍼센트 전달할 것인가
+  rabbitmq:
+    host: 127.0.0.1
+    port: 5672
+    username: guest
+    password: guest
   h2:
     console:
       enabled: true
       settings:
         web-allow-others: true
       path: /h2-console
-  datasource:
-    driver-class-name: org.h2.Driver
-    url: jdbc:h2:mem:testdb
+#  datasource: # config server의 user-service.yml에 넣어서 관리
+#    driver-class-name: org.h2.Driver
+#    url: jdbc:h2:mem:testdb
 
 
 eureka:
@@ -36,10 +46,19 @@ eureka:
 greeting:
   message: Welcome to the Simple E-commerce.
 
+
 logging:
   level:
-    com.example.userservice: DEBUG
+    com.example.userservice.client: DEBUG # feign client가 있는 패키지를 debug로 설정
 
-token:
-  expiration_time: 8400000 # 1분 유효
-  secret: user_token # 토큰화할 때 사용할 키
+
+#token:
+#  expiration_time: 8400000 # 1분 유효
+#  secret: user_token # 토큰화할 때 사용할 키
+
+# Actuator 설정
+management:
+  endpoints:
+    web:
+      exposure:
+        include: refresh, health, beans, busrefresh, info, prometheus, metrics
